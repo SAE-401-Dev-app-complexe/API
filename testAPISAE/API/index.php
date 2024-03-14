@@ -1,0 +1,64 @@
+<?php
+require 'database.php';
+require 'UserService.php';
+function sendJson($jsonData, $code = 200)
+{
+    header('Content-Type: application/json; charset=utf-8');
+    header('Access-Control-Allow-Origin: *');
+    header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
+  
+    http_response_code($code);
+
+    echo json_encode($jsonData);
+}
+
+function getErrorArray($error, $code, $details)
+{
+    return [
+        'error' => $error,
+        'code' => $code,
+        'details' => $details
+    ];
+}
+
+function verifierAuthentification()
+{
+    if (!isset($_SERVER['HTTP_APIKEY']) || $_SERVER['HTTP_APIKEY'] !== 'testApiKey') {
+        sendJson(getErrorArray('Unauthorized', 401, 'Unauthorized access'), 401);
+        return false;
+    }
+    return true;
+}
+
+$demande = !empty($_GET['demande'])
+    ? htmlspecialchars($_GET['demande'])
+    : null;
+
+$ressource = $demande ?
+    explode('/', filter_var($demande, FILTER_SANITIZE_URL))[0]
+    : null;
+
+$id = $demande ?
+    explode('/', $demande)[1] ?? null
+    : null;
+
+switch ($ressource)
+{
+    case null:
+        sendJson(getErrorArray('Bad request', 400, 'No request specified'), 400);
+        break;
+
+        case 'authentification':
+        try {
+            //TODO recuperer login password
+            $login = $password = "non"; //STUB
+            sendJson(UserService::connection($login, $password, getPDO()));
+        } catch (PDOException $e) {
+            sendJson(getErrorArray('Internal server error', 500, $e), 500);
+        }
+        break;
+
+    default:
+        sendJson(getErrorArray('Not found', 404, 'Request not found'), 404);
+        break;
+}

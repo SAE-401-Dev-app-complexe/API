@@ -1,0 +1,8 @@
+{
+    "require": {
+        "phpunit/phpunit": "10x.*",
+        "ext-pdo": "*"
+    },
+    "require-dev": {
+    }
+}
