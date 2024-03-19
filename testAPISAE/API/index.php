@@ -1,6 +1,8 @@
 <?php
 require 'bd.php';
 require 'UserService.php';
+require 'FestivalService.php';
+require 'FavorisService.php';
 function sendJson($jsonData, $code = 200)
 {
     header('Content-Type: application/json; charset=utf-8');
@@ -67,15 +69,16 @@ switch ($ressource)
         break;
     case 'ajouterFavoris':
         try {
-            if (!verifierAuthentification()) {
-                sendJson(getErrorArray('Unauthorized', 401, 'Unauthorized access'), 401);
+            if (verifierAuthentification()) {
+
+                //TODO recuperer idFestival/ idUser
+                $idUtilisateur = $idFestival = 1; //STUB
+                sendJson(FavorisService::ajouterFavoris($idFestival, $idUtilisateur, getPDO()));
             }
-            //TODO recuperer idFestival/ idUser
-            $idUtilisateur = $idFestival = 1; //STUB
-            sendJson(FavorisService::ajouterFavoris($idFestival, $idUtilisateur , getPDO()));
         } catch (PDOException $e) {
             sendJson(getErrorArray('Internal server error', 500, $e), 500);
         }
+        break;
     default:
         sendJson(getErrorArray('Not found', 404, 'Request not found'), 404);
         break;
