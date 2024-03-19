@@ -1,5 +1,5 @@
 <?php
-require 'database.php';
+require 'bd.php';
 require 'UserService.php';
 function sendJson($jsonData, $code = 200)
 {
@@ -48,7 +48,7 @@ switch ($ressource)
         sendJson(getErrorArray('Bad request', 400, 'No request specified'), 400);
         break;
 
-        case 'authentification':
+    case 'authentification':
         try {
             //TODO recuperer login password
             $login = $password = "non"; //STUB
@@ -58,7 +58,25 @@ switch ($ressource)
         }
         break;
 
+    case 'festival':
+        try {
+            sendJson(FestivalService::getFestival(getPDO()));
+        } catch (PDOException $e) {
+            sendJson(getErrorArray('Internal server error', 500, $e), 500);
+        }
+        break;
+    case 'ajouterFavoris':
+        try {
+            if (!verifierAuthentification()) {
+                sendJson(getErrorArray('Unauthorized', 401, 'Unauthorized access'), 401);
+            }
+            //TODO recuperer idFestival/ idUser
+            $idUtilisateur = $idFestival = 1; //STUB
+            sendJson(FavorisService::ajouterFavoris($idFestival, $idUtilisateur , getPDO()));
+        } catch (PDOException $e) {
+            sendJson(getErrorArray('Internal server error', 500, $e), 500);
+        }
     default:
         sendJson(getErrorArray('Not found', 404, 'Request not found'), 404);
         break;
-}
+}   

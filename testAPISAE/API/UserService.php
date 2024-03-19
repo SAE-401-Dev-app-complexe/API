@@ -1,7 +1,7 @@
 <?php
 class UserService {
 
-    public static function connection($login , $mdp , $pdo): array|string
+    public static function connection($login , $mdp , $pdo): array
     {
             $stmt = $pdo->prepare("SELECT * FROM utilisateur WHERE login = :login AND mdp = :mdp");
             $stmt-> bindParam("login" , $login);
