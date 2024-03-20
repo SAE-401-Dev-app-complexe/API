@@ -46,8 +46,8 @@ class UserServiceTest extends TestCase
             // and the user is the special user
             $this->assertEquals($login, $users[0]["login"]);
             $this->assertEquals($password, $users[0]["mdp"]);
-            $this -> pdo -> rollBack();
             */
+            $this -> pdo -> rollBack();
         } catch (PDOException $e) {
             $this->pdo->rollBack();
             $this->fail("PDO error: " . $e->getMessage());
@@ -55,30 +55,52 @@ class UserServiceTest extends TestCase
 
     }
 
-    public function testConnexionInvalidUser()
-    {
-     // given the database initialized with the script in the readme
-        // and a login , password that are not in the database
-        $login = 'nonpresent';
-        $password = 'nonpresent123';
-        //when fetching all users
-        $apiKey = UserService::connection($login, $password, $this->pdo);
-        // then no user is find
-        $this->assertCount(0, $apiKey);
-    }
-
     public function testConnexionInvalidPassword()
     {
         // given the database initialized with the script in the readme
         // and a login that is in the database
         $login = 'logintest';
-        $password = 'nonpresent123';
-        //when fetching all users
-        $users = UserService::connection($login, $password, $this->pdo);
-        // then no user is find
-        $this->assertCount(0, $users);
+        $password = 'passwordtest123';
+        $wrongPassword = 'nonpresent123';
+        try {
+            $this -> pdo -> beginTransaction();
+            classeUtilitaireTest::insertUser('prenomtest', 'nomtest' ,
+                'testmail@gmail.com' , $login, $password , $this->pdo);
+            // when giving the login and a wrong password
+            $apiKey = UserService::connection($login, $wrongPassword, $this->pdo);
+            // then he gets an api key that is null
+            $apiKey = $apiKey["cleApi"];
+            $this->assertNull($apiKey);
+            $this -> pdo -> rollBack();
+        } catch (PDOException $e) {
+            $this->pdo->rollBack();
+            $this->fail("PDO error: " . $e->getMessage());
+        }
     }
 
+
+    public function testConnexionInvalidLogin()
+    {
+        // given the database initialized with the script in the readme
+        // and a password that is in the database
+        $login = 'logintest';
+        $password = 'passwordtest123';
+        $wrongLogin = 'nonpresent';
+        try {
+            $this -> pdo -> beginTransaction();
+            classeUtilitaireTest::insertUser('prenomtest', 'nomtest' ,
+                'testmail@gmail.com' , $login, $password , $this->pdo);
+            // when giving a wrong login (and any password)
+            $apiKey = UserService::connection($wrongLogin, $password, $this->pdo);
+            // then he gets an api key that is null
+            $apiKey = $apiKey["cleApi"];
+            $this->assertNull($apiKey);
+            $this -> pdo -> rollBack();
+        } catch (PDOException $e) {
+            $this->pdo->rollBack();
+            $this->fail("PDO error: " . $e->getMessage());
+        }
+    }
     public function testDatabaseCrash()
     {
         // given a mock PDO object that throws an exception when the query method is called

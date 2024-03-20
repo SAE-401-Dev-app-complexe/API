@@ -7,10 +7,14 @@ class UserService {
         $stmt-> bindParam("login", $login);
         $stmt-> bindParam("mdp", $mdp);
         $stmt->execute();
+        $result = $stmt->fetchAll();
 
-        if (count($stmt->fetchAll()) > 0) {
-            $cleGeneree = UserService::genererCleApi($login, $pdo);
-            return array("cleApi" => $cleGeneree);
+        if (count($result) > 0) {
+            if ($result[0]["cleApi"] == null) {
+                $cleGeneree = UserService::genererCleApi($login, $pdo);
+                return array("cleApi" => $cleGeneree);
+            }
+            return array("cleApi" => $result[0]["cleApi"]);
         } else {
             return array("cleApi" => null);
         }
