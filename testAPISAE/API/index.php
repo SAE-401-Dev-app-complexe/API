@@ -55,9 +55,6 @@ switch ($ressource)
 
     case 'authentification':
         try {
-            //TODO recuperer login password
-            //$login = $password = "non"; //STUB           il suffit de lire le cours de M. Rous qui indique comment récupérer les données du body de l'appel
-            // récupérer les données de la requête         je vous le fais, ça me bloque pour mes tests
             $login = $donnees['login'] ?? null;
             $password = $donnees['password'] ?? null;
             if (!$login || !$password) {
