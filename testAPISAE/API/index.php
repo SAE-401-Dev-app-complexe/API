@@ -25,7 +25,8 @@ function getErrorArray($error, $code, $details)
 
 function verifierAuthentification()
 {
-    if (!isset($_SERVER['HTTP_APIKEY']) || $_SERVER['HTTP_APIKEY'] !== 'testApiKey') {
+    $idUtilisateur = 1; //STUB
+    if (!isset($_SERVER['HTTP_APIKEY']) || !UserService::verifierAuthentification($idUtilisateur , $_SERVER['HTTP_APIKEY'], getPDO())) {
         sendJson(getErrorArray('Unauthorized', 401, 'Unauthorized access'), 401);
         return false;
     }
@@ -82,4 +83,4 @@ switch ($ressource)
     default:
         sendJson(getErrorArray('Not found', 404, 'Request not found'), 404);
         break;
-}   
+}       
