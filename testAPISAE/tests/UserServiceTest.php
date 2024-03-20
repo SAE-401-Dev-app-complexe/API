@@ -30,8 +30,8 @@ class UserServiceTest extends TestCase
         $password = 'passwordtest123';
         try {
             $this -> pdo -> beginTransaction();
-            classeUtilitaireTest::insertUser('prenomtest', 'nomtest' ,
-                'testmail@gmail.com' , $login, $password , $this->pdo);
+            classeUtilitaireTest::insertUser('prenomtest', 'nomtest',
+                'testmail@gmail.com', $login, $password, $this->pdo);
             // when giving the login and password of the special user
             $apiKey = UserService::connection($login, $password, $this->pdo);
             // then he gets an api key that contains 20 characters
@@ -64,8 +64,8 @@ class UserServiceTest extends TestCase
         $wrongPassword = 'nonpresent123';
         try {
             $this -> pdo -> beginTransaction();
-            classeUtilitaireTest::insertUser('prenomtest', 'nomtest' ,
-                'testmail@gmail.com' , $login, $password , $this->pdo);
+            classeUtilitaireTest::insertUser('prenomtest', 'nomtest',
+                'testmail@gmail.com', $login, $password, $this->pdo);
             // when giving the login and a wrong password
             $apiKey = UserService::connection($login, $wrongPassword, $this->pdo);
             // then he gets an api key that is null
@@ -88,8 +88,8 @@ class UserServiceTest extends TestCase
         $wrongLogin = 'nonpresent';
         try {
             $this -> pdo -> beginTransaction();
-            classeUtilitaireTest::insertUser('prenomtest', 'nomtest' ,
-                'testmail@gmail.com' , $login, $password , $this->pdo);
+            classeUtilitaireTest::insertUser('prenomtest', 'nomtest',
+                'testmail@gmail.com', $login, $password, $this->pdo);
             // when giving a wrong login (and any password)
             $apiKey = UserService::connection($wrongLogin, $password, $this->pdo);
             // then he gets an api key that is null
@@ -121,8 +121,32 @@ class UserServiceTest extends TestCase
             $this->pdo->rollBack();
             $this->fail("Error : " . $e->getMessage());
         }
-
     }
+    public function testGetUser()
+    {
+        // given the database initialized with the script in the readme
+        // and a special authentified user
+        $nom = 'nomtest';
+        $prenom = 'prenomtest';
+        try {
+            $this -> pdo -> beginTransaction();
+            classeUtilitaireTest::insertUser($prenom, $nom,
+                'testmail@gmail.com', 'logintest', 'passwordtest123', $this->pdo);
+            $apiKey = UserService::connection('logintest', 'passwordtest123', $this->pdo);
+
+            //when fetching the user with the api key
+            $user = UserService::getUser($apiKey["cleApi"], $this->pdo);
+            //then the user is the special user
+            $this->assertCount(1, $user);
+            $this->assertEquals($nom, $user[0]["nom"]);
+            $this->assertEquals($prenom, $user[0]["prenom"]);
+            $this -> pdo -> rollBack();
+        } catch (PDOException $e) {
+            $this->pdo->rollBack();
+            $this->fail("PDO error: " . $e->getMessage());
+        }
+    }
+
     public function testDatabaseCrash()
     {
         // given a mock PDO object that throws an exception when the query method is called
