@@ -1,25 +1,46 @@
 <?php
 class UserService {
 
-    public static function connection($login , $mdp , $pdo): array
+    public static function connection($login, $mdp, $pdo): array
     {
         $stmt = $pdo->prepare("SELECT * FROM utilisateur WHERE login = :login AND mdp = :mdp");
-        $stmt-> bindParam("login" , $login);
-        $stmt-> bindParam("mdp" , $mdp);
+        $stmt-> bindParam("login", $login);
+        $stmt-> bindParam("mdp", $mdp);
         $stmt->execute();
-        return count($stmt->fetchAll()) > 0 ? array("cleApi" => "testApiKey") : array("cleApi" => null);
+
+        if (count($stmt->fetchAll()) > 0) {
+            $cleGeneree = UserService::genererCleApi($login, $pdo);
+            return array("cleApi" => $cleGeneree);
+        } else {
+            return array("cleApi" => null);
+        }
     }
 
-    public static function inscription($prenom, $nom, $mail, $login, $mdp, $pdo): array
+    public static function genererCleApi($login, $pdo): string
     {
-        $stmt = $pdo->prepare("INSERT INTO utilisateur (prenom , nom, mail,login, mdp ) VALUES (:prenom, :nom, :mail, :login, :mdp)");
-        $stmt->bindParam("login", $login);
-        $stmt->bindParam("mdp", $mdp);
-        $stmt->bindParam("mail", $mail);
-        $stmt->bindParam("nom", $nom);
-        $stmt->bindParam("prenom", $prenom);
-        $stmt->execute();
-        return $stmt->fetchAll();
+        // Génère une clé API aléatoire de 20 caractères alphanumériques
+        // puis modifie l'utilisateur et lui associe cette clé
+        // attention : vérifier qu'un utilisateur ayant la même clé n'existe pas
+        $cleApi = null;
+        do {
+            $cleApi = bin2hex(random_bytes(10));
+
+
+            $stmt = $pdo->prepare("SELECT cleApi FROM utilisateur WHERE cleApi = :cleApi");
+            $stmt-> bindParam("cleApi", $cleApi);
+            $stmt->execute();
+
+            if (count($stmt->fetchAll()) == 0) {
+                $stmt = $pdo->prepare("UPDATE utilisateur SET cleApi = :cleApi WHERE login = :login");
+                $stmt-> bindParam("cleApi", $cleApi);
+                $stmt-> bindParam("login", $login);
+                $stmt->execute();
+            } else {
+                $cleApi = null;
+            }
+        } while ($cleApi == null);
+
+        return $cleApi;
     }
 
     public static function getUser($cleApi, $pdo): array

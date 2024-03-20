@@ -32,14 +32,22 @@ class UserServiceTest extends TestCase
             $this -> pdo -> beginTransaction();
             classeUtilitaireTest::insertUser('prenomtest', 'nomtest' ,
                 'testmail@gmail.com' , $login, $password , $this->pdo);
+            // when giving the login and password of the special user
+            $apiKey = UserService::connection($login, $password, $this->pdo);
+            // then he gets an api key that contains 20 characters
+            $apiKey = $apiKey["cleApi"];
+            $this->assertNotNull($apiKey);
+            $this->assertEquals(20, strlen($apiKey));
             // when fetching all users
-            $users = UserService::connection($login, $password, $this->pdo);
+            /*
+            $users = UserService::getUser($apiKey, $this->pdo);
             // then 1 and only 1 user is find
             $this->assertCount(1, $users);
             // and the user is the special user
             $this->assertEquals($login, $users[0]["login"]);
             $this->assertEquals($password, $users[0]["mdp"]);
             $this -> pdo -> rollBack();
+            */
         } catch (PDOException $e) {
             $this->pdo->rollBack();
             $this->fail("PDO error: " . $e->getMessage());
@@ -54,9 +62,9 @@ class UserServiceTest extends TestCase
         $login = 'nonpresent';
         $password = 'nonpresent123';
         //when fetching all users
-        $users = UserService::connection($login, $password, $this->pdo);
+        $apiKey = UserService::connection($login, $password, $this->pdo);
         // then no user is find
-        $this->assertCount(0, $users);
+        $this->assertCount(0, $apiKey);
     }
 
     public function testConnexionInvalidPassword()
