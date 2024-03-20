@@ -86,6 +86,16 @@ switch ($ressource)
             sendJson(getErrorArray('Internal server error', 500, $e), 500);
         }
         break;
+    case 'favoris':
+        try {
+            if (verifierAuthentification()) {
+                $idUtilisateur = 1; //STUB
+                sendJson(FavorisService::getFavoris($idUtilisateur, getPDO()));
+            }
+        } catch (PDOException $e) {
+            sendJson(getErrorArray('Internal server error', 500, $e), 500);
+        }
+        break;
     default:
         sendJson(getErrorArray('Not found', 404, 'Request not found'), 404);
         break;

@@ -11,4 +11,12 @@ class FavorisService
         $stmt->execute();
         return $stmt->fetchAll();
     }
+
+    public static function getFavoris(int $idUtilisateur, PDO $getPDO)
+    {
+        $stmt = $getPDO->prepare("SELECT * FROM festivalsfavoris WHERE idUtilisateur = :idUtilisateur");
+        $stmt->bindParam("idUtilisateur", $idUtilisateur);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
 }
