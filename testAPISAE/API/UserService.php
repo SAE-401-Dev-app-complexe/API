@@ -11,7 +11,12 @@ class UserService {
 
         if (count($result) > 0) {
             if ($result[0]["cleApi"] == null) {
-                $cleGeneree = UserService::genererCleApi($login, $pdo);
+                $cleGeneree = UserService::genererCleApi($pdo);
+
+                $stmt = $pdo->prepare("UPDATE utilisateur SET cleApi = :cleApi WHERE login = :login");
+                $stmt-> bindParam("cleApi", $cleGeneree);
+                $stmt-> bindParam("login", $login);
+                $stmt->execute();
                 return array("cleApi" => $cleGeneree);
             }
             return array("cleApi" => $result[0]["cleApi"]);
@@ -20,7 +25,7 @@ class UserService {
         }
     }
 
-    public static function genererCleApi($login, $pdo): string
+    public static function genererCleApi($pdo): string
     {
         // Génère une clé API aléatoire de 20 caractères alphanumériques
         // puis modifie l'utilisateur et lui associe cette clé
@@ -34,12 +39,7 @@ class UserService {
             $stmt-> bindParam("cleApi", $cleApi);
             $stmt->execute();
 
-            if (count($stmt->fetchAll()) == 0) {
-                $stmt = $pdo->prepare("UPDATE utilisateur SET cleApi = :cleApi WHERE login = :login");
-                $stmt-> bindParam("cleApi", $cleApi);
-                $stmt-> bindParam("login", $login);
-                $stmt->execute();
-            } else {
+            if (count($stmt->fetchAll()) != 0) {
                 $cleApi = null;
             }
         } while ($cleApi == null);

@@ -101,6 +101,28 @@ class UserServiceTest extends TestCase
             $this->fail("PDO error: " . $e->getMessage());
         }
     }
+
+    public function testGenererCleApi()
+    {
+        // given the database initialized with the script in the readme
+        // and a special user
+        $login = 'logintest';
+        $password = 'passwordtest123';
+        try {
+            $this -> pdo -> beginTransaction();
+            for ($i = 0; $i < 10; $i++) {
+                $apiKey = UserService::genererCleApi($this->pdo);
+                // then the api key contains 20 characters
+                $this->assertNotNull($apiKey);
+                $this->assertEquals(20, strlen($apiKey));
+            }
+
+        } catch (Exception $e) {
+            $this->pdo->rollBack();
+            $this->fail("Error : " . $e->getMessage());
+        }
+
+    }
     public function testDatabaseCrash()
     {
         // given a mock PDO object that throws an exception when the query method is called
