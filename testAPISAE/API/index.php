@@ -97,4 +97,5 @@ switch ($ressource)
     default:
         sendJson(getErrorArray('Not found', 404, 'Request not found'), 404);
         break;
+
 }       

@@ -58,7 +58,7 @@ class UserService {
     public static function verifierAuthentification(String $apiKey, PDO $getPDO): bool
     {
         $stmt = $getPDO->prepare("SELECT cleApi FROM utilisateur WHERE cleApi = :cleApi");
-        $stmt-> bindParam("apikey", $apiKey);
+        $stmt-> bindParam("cleApi", $apiKey);
         $stmt->execute();
         $resultat = $stmt->fetch();
         return $resultat["cleApi"] == $apiKey;
