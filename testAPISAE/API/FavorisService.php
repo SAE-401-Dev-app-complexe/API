@@ -9,7 +9,6 @@ class FavorisService
         $stmt->bindParam("idFestival", $idFestival);
         $stmt->bindParam("idUtilisateur", $idUtilisateur);
         $stmt->execute();
-        return $stmt->fetchAll();
     }
 
     public static function getFavoris(int $idUtilisateur, PDO $getPDO)
