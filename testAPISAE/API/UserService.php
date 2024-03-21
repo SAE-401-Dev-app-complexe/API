@@ -55,13 +55,12 @@ class UserService {
         return $stmt->fetchAll();
     }
 
-    public static function verifierAuthentification(int $idUtilisateur, mixed $HTTP_APIKEY, PDO $getPDO)
+    public static function verifierAuthentification(String $apiKey, PDO $getPDO): bool
     {
-$stmt = $getPDO->prepare("SELECT cleApi FROM utilisateur WHERE idUtilisateur = :id ");
-        $stmt-> bindParam("id", $idUtilisateur);
-        $stmt-> bindParam("apikey", $HTTP_APIKEY);
+        $stmt = $getPDO->prepare("SELECT cleApi FROM utilisateur WHERE cleApi = :cleApi");
+        $stmt-> bindParam("apikey", $apiKey);
         $stmt->execute();
-        $resultat = $stmt->fetchAll();
-        return $resultat == $HTTP_APIKEY;
+        $resultat = $stmt->fetch();
+        return $resultat["cleApi"] == $apiKey;
     }
 }

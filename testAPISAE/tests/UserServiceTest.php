@@ -122,7 +122,7 @@ class UserServiceTest extends TestCase
             $this->fail("Error : " . $e->getMessage());
         }
     }
-    public function testGetUser()
+    public function testGetUserNoError()
     {
         // given the database initialized with the script in the readme
         // and a special authentified user
@@ -146,6 +146,7 @@ class UserServiceTest extends TestCase
             $this->fail("PDO error: " . $e->getMessage());
         }
     }
+
 
     public function testDatabaseCrash()
     {

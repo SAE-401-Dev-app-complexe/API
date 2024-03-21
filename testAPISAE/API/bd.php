@@ -1,5 +1,5 @@
 <?php 
-function getPDO()
+function getPDO() : PDO
 {
     $host = 'localhost';
     $dbName = 'festiplanbfgi_sae';
