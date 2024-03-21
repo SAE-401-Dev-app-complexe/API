@@ -5,7 +5,7 @@ class FestivalService {
     public static function getFestival($pdo,$cle): array
     {
         
-        $stmt = $pdo->prepare("SELECT festival.idFestival, festival.titre, festival.illustration, festival.dateDebut, festival.dateFin, 
+        $stmt = $pdo->prepare("SELECT festival.idFestival, festival.titre,festival.categorie, festival.illustration, festival.description, festival.dateDebut, festival.dateFin, 
         CASE 
         WHEN utilisateur.idUtilisateur IS NOT NULL THEN true
         ELSE false
