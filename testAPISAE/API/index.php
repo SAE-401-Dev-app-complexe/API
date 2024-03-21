@@ -88,7 +88,7 @@ switch ($ressource)
     case 'favoris':
         try {
             if (verifierAuthentification()) {
-                sendJson(FavorisService::getFavoris($_SERVER['HTTP_APIKEY'], getPDO()));
+                sendJson(FavorisService::getFestivalFavoris($_SERVER['HTTP_APIKEY'], getPDO()));
             }
         } catch (PDOException $e) {
             sendJson(getErrorArray('Internal server error', 500, $e), 500);
