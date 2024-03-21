@@ -26,7 +26,7 @@ function getErrorArray($error, $code, $details)
 function verifierAuthentification()
 {
     $idUtilisateur = 1; //STUB
-    if (!isset($_SERVER['HTTP_APIKEY']) || !UserService::verifierAuthentification($idUtilisateur , $_SERVER['HTTP_APIKEY'], getPDO())) {
+    if (!isset($_SERVER['HTTP_APIKEY']) || !UserService::verifierAuthentification($idUtilisateur, $_SERVER['HTTP_APIKEY'], getPDO())) {
         sendJson(getErrorArray('Unauthorized', 401, 'Unauthorized access'), 401);
         return false;
     }
