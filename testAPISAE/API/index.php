@@ -36,7 +36,7 @@ function getErrorArray(String $error, int $code, String $details) : array
 function verifierAuthentification() : bool
 {
     if (!isset($_SERVER['HTTP_APIKEY']) || !UserService::verifierAuthentification($_SERVER['HTTP_APIKEY'], getPDO())) {
-        sendJson(getErrorArray('Acces non autorisé', 401, 'Vous ne possedez pas de clé API'), 401);
+        sendJson(getErrorArray('Accès non autorisé', 401, 'Veuillez fournir une clé API valide'), 401);
         return false;
     }
     return true;
@@ -60,7 +60,7 @@ switch ($ressource)
 {
     // Cas ou la méthode n'est pas spécifié
     case null:
-        sendJson(getErrorArray('Mauvaise requete', 400, 'Pas de fonction spécifié'), 400);
+        sendJson(getErrorArray('Mauvaise requête', 400, 'Spécifiez la ressource à envoyer'), 400);
         break;
     // Verifie si l'utilisateur existe et lui donne si c'est le cas une clé API
     case 'authentification':
@@ -68,7 +68,7 @@ switch ($ressource)
             $login = $donnees['login'] ?? null;
             $password = $donnees['password'] ?? null;
             if (!$login || !$password) {
-                sendJson(getErrorArray('Mauvaise requete', 400, 'Identifiant ou Mot de passe manquant'), 400);
+                sendJson(getErrorArray('Mauvaise requête', 400, 'Identifiant ou mot de passe manquant'), 400);
                 break;
             }
             sendJson(UserService::connection($login, $password, getPDO()));
@@ -90,10 +90,10 @@ switch ($ressource)
             if (verifierAuthentification()) {
                 $idFestival = $donnees['idFestival'] ?? null;
                 if (!$idFestival) {
-                    sendJson(getErrorArray('Mauvaise requete', 400, 'ID du festival a mettre en favoris manquant'), 400);
+                    sendJson(getErrorArray('Mauvaise requête', 400, 'ID du festival à mettre en favori manquant'), 400);
                     break;
                 }
-                FavorisService::ajouterFavoris($idFestival, $_SERVER['HTTP_APIKEY'], getPDO());
+                sendJson(FavorisService::ajouterFavori($idFestival, $_SERVER['HTTP_APIKEY'], getPDO()));
             }
         } catch (PDOException $e) {
             sendJson(getErrorArray('Erreur interne au serveur', 500, $e), 500);
@@ -103,7 +103,7 @@ switch ($ressource)
     case 'favoris':
         try {
             if (verifierAuthentification()) {
-                sendJson(FavorisService::getFestivalFavoris(getPDO() , $_SERVER['HTTP_APIKEY']));
+                sendJson(FavorisService::getFestivalFavoris(getPDO(), $_SERVER['HTTP_APIKEY']));
             }
         } catch (PDOException $e) {
             sendJson(getErrorArray('Erreur interne au serveur', 500, $e), 500);
@@ -115,10 +115,10 @@ switch ($ressource)
             if (verifierAuthentification()) {
                 $idFestival = $donnees['idFestival'] ?? null;
                 if (!$idFestival) {
-                    sendJson(getErrorArray('Mauvaise requete', 400, 'ID du festival a supprimer manquant '), 400);
+                    sendJson(getErrorArray('Mauvaise requête', 400, 'ID du festival à supprimer manquant'), 400);
                     break;
                 }
-                FavorisService::supprimerFavoris($idFestival, $_SERVER['HTTP_APIKEY'], getPDO());
+                sendJson(FavorisService::supprimerFavori($idFestival, $_SERVER['HTTP_APIKEY'], getPDO()));
             }
         } catch (PDOException $e) {
             sendJson(getErrorArray('Erreur interne au serveur', 500, $e), 500);
@@ -126,6 +126,6 @@ switch ($ressource)
         break;
     // tentative d'appel d'une méthode n'existant pas
     default:
-        sendJson(getErrorArray('URL non trouvé', 404, 'requete inconnue'), 404);
+        sendJson(getErrorArray('URL non trouvée', 404, 'Requête inconnue'), 404);
         break;
 }       

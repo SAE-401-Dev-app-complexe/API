@@ -3,12 +3,14 @@
 class FavorisService
 {
 
-    public static function ajouterFavoris(int $idFestival, int $idUtilisateur, PDO $pdo)
+    public static function ajouterFavori(int $idFestival, String $apiKey, PDO $pdo)
     {
-        $stmt = $pdo->prepare("INSERT INTO festivalsfavoris (idFestival, idUtilisateur) VALUES (:idFestival, :idUtilisateur)");
+        $idUtilisateur = UserService::getUser($apiKey, $pdo)[0]["idUtilisateur"];
+        $stmt = $pdo->prepare("INSERT IGNORE INTO festivalsfavoris (idFestival, idUtilisateur) VALUES (:idFestival, :idUtilisateur)");
         $stmt->bindParam("idFestival", $idFestival);
         $stmt->bindParam("idUtilisateur", $idUtilisateur);
         $stmt->execute();
+        return array("ok"=>"ok");
     }
 
    public static function getFestivalFavoris(PDO $pdo,String $cleApi): array
@@ -22,12 +24,13 @@ class FavorisService
         return $stmt->fetchAll();
     }
 
-    public static function supprimerFavoris(mixed $idFestival, mixed $HTTP_APIKEY, PDO $getPDO)
+    public static function supprimerFavori(mixed $idFestival, String $HTTP_APIKEY, PDO $getPDO)
     {
         $idUtilisateur = UserService::getUser($HTTP_APIKEY, $getPDO)[0]["idUtilisateur"];
         $stmt = $getPDO->prepare("DELETE FROM festivalsfavoris WHERE idFestival = :idFestival AND idUtilisateur = :idUtilisateur");
         $stmt->bindParam(":idFestival",$idFestival);
         $stmt->bindParam(":idUtilisateur",$idUtilisateur);
         $stmt->execute();
+        return array("ok"=>"ok");
     }
 }
