@@ -26,7 +26,7 @@ function getErrorArray(String $error, int $code, String $details) : array
 function verifierAuthentification() : bool
 {
     if (!isset($_SERVER['HTTP_APIKEY']) || !UserService::verifierAuthentification($_SERVER['HTTP_APIKEY'], getPDO())) {
-        sendJson(getErrorArray('Unauthorized', 401, 'Unauthorized access'), 401);
+        sendJson(getErrorArray('Acces non autorisé', 401, 'Vous ne possedez pas de clé API'), 401);
         return false;
     }
     return true;
@@ -49,7 +49,7 @@ $donnees = json_decode(file_get_contents('php://input'), true);
 switch ($ressource)
 {
     case null:
-        sendJson(getErrorArray('Bad request', 400, 'No request specified'), 400);
+        sendJson(getErrorArray('Mauvaise requete', 400, 'Pas de fonction spécifié'), 400);
         break;
 
     case 'authentification':
@@ -57,12 +57,12 @@ switch ($ressource)
             $login = $donnees['login'] ?? null;
             $password = $donnees['password'] ?? null;
             if (!$login || !$password) {
-                sendJson(getErrorArray('Bad request', 400, 'Missing login or password'), 400);
+                sendJson(getErrorArray('Mauvaise requete', 400, 'Identifiant ou Mot de passe manquant'), 400);
                 break;
             }
             sendJson(UserService::connection($login, $password, getPDO()));
         } catch (PDOException $e) {
-            sendJson(getErrorArray('Internal server error', 500, $e), 500);
+            sendJson(getErrorArray('Erreur interne au serveur', 500, $e), 500);
         }
         break;
 
@@ -70,7 +70,7 @@ switch ($ressource)
         try {
             sendJson(FestivalService::getFestival(getPDO(), $_SERVER['HTTP_APIKEY']));
         } catch (PDOException $e) {
-            sendJson(getErrorArray('Internal server error', 500, $e), 500);
+            sendJson(getErrorArray('Erreur interne au serveur', 500, $e), 500);
         }
         break;
     case 'ajouterFavoris':
@@ -78,13 +78,13 @@ switch ($ressource)
             if (verifierAuthentification()) {
                 $idFestival = $donnees['idFestival'] ?? null;
                 if (!$idFestival) {
-                    sendJson(getErrorArray('Bad request', 400, 'Missing Festival'), 400);
+                    sendJson(getErrorArray('Mauvaise requete', 400, 'ID du festival a mettre en favoris manquant'), 400);
                     break;
                 }
                 FavorisService::ajouterFavoris($idFestival, $_SERVER['HTTP_APIKEY'], getPDO());
             }
         } catch (PDOException $e) {
-            sendJson(getErrorArray('Internal server error', 500, $e), 500);
+            sendJson(getErrorArray('Erreur interne au serveur', 500, $e), 500);
         }
         break;
     case 'favoris':
@@ -93,7 +93,7 @@ switch ($ressource)
                 sendJson(FavorisService::getFestivalFavoris(getPDO() , $_SERVER['HTTP_APIKEY']));
             }
         } catch (PDOException $e) {
-            sendJson(getErrorArray('Internal server error', 500, $e), 500);
+            sendJson(getErrorArray('Erreur interne au serveur', 500, $e), 500);
         }
         break;
     case 'supprimerFavoris':
@@ -101,17 +101,17 @@ switch ($ressource)
             if (verifierAuthentification()) {
                 $idFestival = $donnees['idFestival'] ?? null;
                 if (!$idFestival) {
-                    sendJson(getErrorArray('Bad request', 400, 'Missing Festival'), 400);
+                    sendJson(getErrorArray('Mauvaise requete', 400, 'ID du festival a supprimer manquant '), 400);
                     break;
                 }
                 FavorisService::supprimerFavoris($idFestival, $_SERVER['HTTP_APIKEY'], getPDO());
             }
         } catch (PDOException $e) {
-            sendJson(getErrorArray('Internal server error', 500, $e), 500);
+            sendJson(getErrorArray('Erreur interne au serveur', 500, $e), 500);
         }
         break;
     default:
-        sendJson(getErrorArray('Not found', 404, 'Request not found'), 404);
+        sendJson(getErrorArray('URL non trouvé', 404, 'requete inconnue'), 404);
         break;
 
 }       
