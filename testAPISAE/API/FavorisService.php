@@ -21,4 +21,13 @@ class FavorisService
         $stmt->execute();
         return $stmt->fetchAll();
     }
+
+    public static function supprimerFavoris(mixed $idFestival, mixed $HTTP_APIKEY, PDO $getPDO)
+    {
+        $idUtilisateur = UserService::getUser($HTTP_APIKEY, $getPDO)[0]["idUtilisateur"];
+        $stmt = $getPDO->prepare("DELETE FROM festivalsfavoris WHERE idFestival = :idFestival AND idUtilisateur = :idUtilisateur");
+        $stmt->bindParam(":idFestival",$idFestival);
+        $stmt->bindParam(":idUtilisateur",$idUtilisateur);
+        $stmt->execute();
+    }
 }

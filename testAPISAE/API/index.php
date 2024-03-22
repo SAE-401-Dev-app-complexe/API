@@ -96,6 +96,20 @@ switch ($ressource)
             sendJson(getErrorArray('Internal server error', 500, $e), 500);
         }
         break;
+    case 'supprimerFavoris':
+        try {
+            if (verifierAuthentification()) {
+                $idFestival = $donnees['idFestival'] ?? null;
+                if (!$idFestival) {
+                    sendJson(getErrorArray('Bad request', 400, 'Missing Festival'), 400);
+                    break;
+                }
+                FavorisService::supprimerFavoris($idFestival, $_SERVER['HTTP_APIKEY'], getPDO());
+            }
+        } catch (PDOException $e) {
+            sendJson(getErrorArray('Internal server error', 500, $e), 500);
+        }
+        break;
     default:
         sendJson(getErrorArray('Not found', 404, 'Request not found'), 404);
         break;
