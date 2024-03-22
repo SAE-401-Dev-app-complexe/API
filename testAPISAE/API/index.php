@@ -66,7 +66,7 @@ switch ($ressource)
         }
         break;
 
-    case 'festival':
+    case 'festivals':
         try {
             sendJson(FestivalService::getFestival(getPDO(), $_SERVER['HTTP_APIKEY']));
         } catch (PDOException $e) {
