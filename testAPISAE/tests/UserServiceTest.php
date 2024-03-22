@@ -165,6 +165,52 @@ class UserServiceTest extends TestCase
         }
     }
 
+    public  function testVerifierAuthentificationNoError()
+    {
+        // given the database initialized with the script in the readme
+        // and a special user
+        $login = 'logintest';
+        $password = 'passwordtest123';
+        try {
+            $this->pdo->beginTransaction();
+            classeUtilitaireTest::insertUser('prenomtest', 'nomtest',
+                'testmail@gmail.com', $login, $password, $this->pdo);
+            $apiKey = UserService::connection($login, $password, $this->pdo);
+            // when verifying the authentification with the api key of the user
+            $authentification = UserService::verifierAuthentification($apiKey["cleApi"], $this->pdo);
+            // then the authentification is true
+            $this->assertTrue($authentification);
+            $this->pdo->rollBack();
+
+        } catch (PDOException $e) {
+            $this->pdo->rollBack();
+            $this->fail("PDO error: " . $e->getMessage());
+        }
+    }
+
+    public  function testVerifierAuthentificationInvalidApiKey()
+    {
+        // given the database initialized with the script in the readme
+        // and a special user
+        $login = 'logintest';
+        $password = 'passwordtest123';
+        try {
+            $this->pdo->beginTransaction();
+            classeUtilitaireTest::insertUser('prenomtest', 'nomtest',
+                'testmail@gmail.com', $login, $password, $this->pdo);
+            $apiKey = UserService::connection($login, $password, $this->pdo);
+            // when verifying the authentification with an api random api key
+            $authentification = UserService::verifierAuthentification(UserService::genererCleApi($this->pdo), $this->pdo);
+            // then the authentification is false
+            $this->assertFalse($authentification);
+            $this->pdo->rollBack();
+
+        } catch (PDOException $e) {
+            $this->pdo->rollBack();
+            $this->fail("PDO error: " . $e->getMessage());
+        }
+    }
+
 
     public function testDatabaseCrash()
     {
