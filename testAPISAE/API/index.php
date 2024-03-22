@@ -104,7 +104,7 @@ switch ($ressource)
                     sendJson(getErrorArray('Mauvaise requête', 400, 'ID du festival à supprimer manquant'), 400);
                     break;
                 }
-                sendJson(FestivalService::supprimerFavori($idFestival, $_SERVER['HTTP_APIKEY'], getPDO()));
+                sendJson(FavorisService::supprimerFavori($idFestival, $_SERVER['HTTP_APIKEY'], getPDO()));
             }
         } catch (PDOException $e) {
             sendJson(getErrorArray('Erreur interne au serveur', 500, $e), 500);
