@@ -6,7 +6,7 @@ class FavorisService
     public static function ajouterFavoris(int $idFestival, String $apiKey, PDO $pdo)
     {
         $idUtilisateur = UserService::getUser($apiKey, $pdo)[0]["idUtilisateur"];
-        $stmt = $pdo->prepare("INSERT INTO festivalsfavoris (idFestival, idUtilisateur) VALUES (:idFestival, :idUtilisateur)");
+        $stmt = $pdo->prepare("INSERT IGNORE INTO festivalsfavoris (idFestival, idUtilisateur) VALUES (:idFestival, :idUtilisateur)");
         $stmt->bindParam("idFestival", $idFestival);
         $stmt->bindParam("idUtilisateur", $idUtilisateur);
         $stmt->execute();
