@@ -3,7 +3,7 @@ require 'bd.php';
 require 'UserService.php';
 require 'FestivalService.php';
 require 'FavorisService.php';
-function sendJson($jsonData, $code = 200)
+function sendJson(array $jsonData, int $code = 200) : void
 {
     header('Content-Type: application/json; charset=utf-8');
     header('Access-Control-Allow-Origin: *');
@@ -14,7 +14,7 @@ function sendJson($jsonData, $code = 200)
     echo json_encode($jsonData);
 }
 
-function getErrorArray($error, $code, $details)
+function getErrorArray(String $error, int $code, String $details) : array
 {
     return [
         'error' => $error,
@@ -23,7 +23,7 @@ function getErrorArray($error, $code, $details)
     ];
 }
 
-function verifierAuthentification()
+function verifierAuthentification() : bool
 {
     if (!isset($_SERVER['HTTP_APIKEY']) || !UserService::verifierAuthentification($_SERVER['HTTP_APIKEY'], getPDO())) {
         sendJson(getErrorArray('Unauthorized', 401, 'Unauthorized access'), 401);
@@ -68,7 +68,7 @@ switch ($ressource)
 
     case 'festival':
         try {
-            sendJson(FestivalService::getFestival(getPDO() , $_SERVER['HTTP_APIKEY']));
+            sendJson(FestivalService::getFestival(getPDO(), $_SERVER['HTTP_APIKEY']));
         } catch (PDOException $e) {
             sendJson(getErrorArray('Internal server error', 500, $e), 500);
         }
@@ -76,10 +76,12 @@ switch ($ressource)
     case 'ajouterFavoris':
         try {
             if (verifierAuthentification()) {
-
-                //TODO recuperer idFestival/ idUser
-                $idUtilisateur = $idFestival = 1; //STUB
-                sendJson(FavorisService::ajouterFavoris($idFestival, $idUtilisateur, getPDO()));
+                $idFestival = $donnees['idFestival'] ?? null;
+                if (!$idFestival) {
+                    sendJson(getErrorArray('Bad request', 400, 'Missing Festival'), 400);
+                    break;
+                }
+                FavorisService::ajouterFavoris($idFestival, $_SERVER['HTTP_APIKEY'], getPDO());
             }
         } catch (PDOException $e) {
             sendJson(getErrorArray('Internal server error', 500, $e), 500);

@@ -1,7 +1,7 @@
 <?php
 class UserService {
 
-    public static function connection($login, $mdp, $pdo): array
+    public static function connection(String $login, String $mdp, PDO $pdo): array
     {
         $stmt = $pdo->prepare("SELECT * FROM utilisateur WHERE login = :login AND mdp = :mdp");
         $stmt-> bindParam("login", $login);
@@ -25,7 +25,7 @@ class UserService {
         }
     }
 
-    public static function genererCleApi($pdo): string
+    public static function genererCleApi(PDO $pdo): string
     {
         // Génère une clé API aléatoire de 20 caractères alphanumériques
         // puis modifie l'utilisateur et lui associe cette clé
@@ -47,7 +47,7 @@ class UserService {
         return $cleApi;
     }
 
-    public static function getUser($cleApi, $pdo): array
+    public static function getUser(String $cleApi, PDO $pdo): array
     {
         $stmt = $pdo->prepare("SELECT * FROM utilisateur WHERE cleApi = :cleApi");
         $stmt-> bindParam("cleApi", $cleApi);
