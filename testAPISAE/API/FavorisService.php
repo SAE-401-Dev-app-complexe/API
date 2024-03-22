@@ -13,15 +13,11 @@ class FavorisService
 
    public static function getFestivalFavoris(PDO $pdo,String $cleApi): array
     {
-        $stmt = $pdo->prepare("SELECT festival.idFestival, festival.titre,festival.categorie,festival.description, festival.illustration, festival.dateDebut, festival.dateFin, 
-                                CASE 
-                                WHEN utilisateur.idUtilisateur IS NOT NULL THEN true
-                                 ELSE false
-                                END as favoris FROM festival JOIN festivalsfavoris 
-                                ON festival.idFestival = festivalsfavoris.idFestival 
-                                JOIN utilisateur ON festivalsfavoris.idUtilisateur = utilisateur.idUtilisateur 
-                                WHERE utilisateur.cleApi = :cle");
-        $stmt->bindParam(":cle",$cleApi);
+        $idUtilisateur = UserService::getUser($cleApi, $pdo)[0]["idUtilisateur"];
+        $stmt = $pdo->prepare("SELECT * FROM festival
+                               INNER JOIN festivalsfavoris ON festival.idFestival = festivalsfavoris.idFestival
+                               WHERE festivalsfavoris.idUtilisateur = :idUtilisateur");
+        $stmt->bindParam(":idUtilisateur",$idUtilisateur);
         $stmt->execute();
         return $stmt->fetchAll();
     }

@@ -49,7 +49,7 @@ class UserService {
 
     public static function getUser(String $cleApi, PDO $pdo): array
     {
-        $stmt = $pdo->prepare("SELECT nom, prenom FROM utilisateur WHERE cleApi = :cleApi");
+        $stmt = $pdo->prepare("SELECT * FROM utilisateur WHERE cleApi = :cleApi");
         $stmt-> bindParam("cleApi", $cleApi);
         $stmt->execute();
         return $stmt->fetchAll();
