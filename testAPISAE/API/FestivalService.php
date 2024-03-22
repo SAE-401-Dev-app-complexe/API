@@ -21,7 +21,6 @@ class FestivalService {
 
         $stmt->bindParam("cleApi",$cle);
         $stmt->execute();
-        $result = $stmt->fetchAll();
-
+        return $stmt->fetchAll();
     }
 }
