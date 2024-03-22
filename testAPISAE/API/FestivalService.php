@@ -2,7 +2,7 @@
 
 class FestivalService {
 
-    public static function getFestival(PDO $pdo, String $cle): array
+    public static function getFestival(PDO $pdo, String $cleApi): array
     {
         $stmt = $pdo->prepare("
             SELECT FE.idFestival, FE.titre, FE.illustration, FE.description, DATE_FORMAT(FE.dateDebut, '%d/%m/%Y') as dateDebut, DATE_FORMAT(FE.dateFin, '%d/%m/%Y') as dateFin,
@@ -19,7 +19,7 @@ class FestivalService {
             AND (UT.cleApi = :cleApi OR FF.idFestival IS NULL)
             ORDER BY FE.dateDebut ASC;");
 
-        $stmt->bindParam("cleApi",$cle);
+        $stmt->bindParam("cleApi",$cleApi);
         $stmt->execute();
         return $stmt->fetchAll();
     }

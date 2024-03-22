@@ -3,7 +3,7 @@
 class FavorisService
 {
 
-    public static function ajouterFavoris(int $idFestival, String $apiKey, PDO $pdo)
+    public static function ajouterFavori(int $idFestival, String $apiKey, PDO $pdo)
     {
         $idUtilisateur = UserService::getUser($apiKey, $pdo)[0]["idUtilisateur"];
         $stmt = $pdo->prepare("INSERT IGNORE INTO festivalsfavoris (idFestival, idUtilisateur) VALUES (:idFestival, :idUtilisateur)");
@@ -24,7 +24,7 @@ class FavorisService
         return $stmt->fetchAll();
     }
 
-    public static function supprimerFavoris(mixed $idFestival, mixed $HTTP_APIKEY, PDO $getPDO)
+    public static function supprimerFavori(mixed $idFestival, String $HTTP_APIKEY, PDO $getPDO)
     {
         $idUtilisateur = UserService::getUser($HTTP_APIKEY, $getPDO)[0]["idUtilisateur"];
         $stmt = $getPDO->prepare("DELETE FROM festivalsfavoris WHERE idFestival = :idFestival AND idUtilisateur = :idUtilisateur");

@@ -81,7 +81,7 @@ switch ($ressource)
                     sendJson(getErrorArray('Mauvaise requête', 400, 'ID du festival à mettre en favori manquant'), 400);
                     break;
                 }
-                sendJson(FavorisService::ajouterFavoris($idFestival, $_SERVER['HTTP_APIKEY'], getPDO()), $_SERVER['HTTP_APIKEY']);
+                sendJson(FavorisService::ajouterFavori($idFestival, $_SERVER['HTTP_APIKEY'], getPDO()));
             }
         } catch (PDOException $e) {
             sendJson(getErrorArray('Erreur interne au serveur', 500, $e), 500);
@@ -104,7 +104,7 @@ switch ($ressource)
                     sendJson(getErrorArray('Mauvaise requête', 400, 'ID du festival à supprimer manquant'), 400);
                     break;
                 }
-                sendJson(FestivalService::supprimerFavoris($idFestival, $_SERVER['HTTP_APIKEY'], getPDO()), $_SERVER['HTTP_APIKEY']);
+                sendJson(FestivalService::supprimerFavori($idFestival, $_SERVER['HTTP_APIKEY'], getPDO()));
             }
         } catch (PDOException $e) {
             sendJson(getErrorArray('Erreur interne au serveur', 500, $e), 500);
