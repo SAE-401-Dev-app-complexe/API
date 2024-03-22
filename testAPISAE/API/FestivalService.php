@@ -2,7 +2,7 @@
 
 class FestivalService {
 
-    public static function getFestival($pdo,$cle): array
+    public static function getFestival(PDO $pdo,String $cle): array
     {
         
         $stmt = $pdo->prepare("SELECT festival.idFestival, festival.titre,festival.categorie, festival.illustration, festival.description, festival.dateDebut, festival.dateFin, 

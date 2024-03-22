@@ -11,7 +11,7 @@ class FavorisService
         $stmt->execute();
     }
 
-   public static function getFestivalFavoris($pdo,$cleApi): array
+   public static function getFestivalFavoris(PDO $pdo,String $cleApi): array
     {
         $stmt = $pdo->prepare("SELECT festival.idFestival, festival.titre,festival.categorie,festival.description, festival.illustration, festival.dateDebut, festival.dateFin, 
                                 CASE 

@@ -147,6 +147,24 @@ class UserServiceTest extends TestCase
         }
     }
 
+    public function testGetUserInvalidApiKey()
+    {
+        // given the database initialized with the script in the readme
+        // and a false apiKey
+        $invalidApiKey = 'azertyuiopmlkjhgfdsq';
+        try {
+            $this -> pdo -> beginTransaction();
+            //when fetching an user with the api key
+            $user = UserService::getUser($invalidApiKey, $this->pdo);
+            //then there is no user
+            $this->assertCount(0, $user);
+            $this -> pdo -> rollBack();
+        } catch (PDOException $e) {
+            $this->pdo->rollBack();
+            $this->fail("PDO error: " . $e->getMessage());
+        }
+    }
+
 
     public function testDatabaseCrash()
     {
