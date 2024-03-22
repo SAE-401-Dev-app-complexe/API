@@ -10,6 +10,7 @@ class FavorisService
         $stmt->bindParam("idFestival", $idFestival);
         $stmt->bindParam("idUtilisateur", $idUtilisateur);
         $stmt->execute();
+        return array("ok"=>"ok");
     }
 
    public static function getFestivalFavoris(PDO $pdo,String $cleApi): array
@@ -30,5 +31,6 @@ class FavorisService
         $stmt->bindParam(":idFestival",$idFestival);
         $stmt->bindParam(":idUtilisateur",$idUtilisateur);
         $stmt->execute();
+        return array("ok"=>"ok");
     }
 }
