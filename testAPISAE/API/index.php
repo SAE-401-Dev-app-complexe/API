@@ -76,8 +76,11 @@ switch ($ressource)
     case 'ajouterFavoris':
         try {
             if (verifierAuthentification()) {
-
-                //TODO recuperer idFestival/ idUser
+                $idFestival = $donnees['idFestival'] ?? null;
+                if (!$idFestival) {
+                    sendJson(getErrorArray('Bad request', 400, 'Missing Festival'), 400);
+                    break;
+                }
                 FavorisService::ajouterFavoris($idFestival, $_SERVER['HTTP_APIKEY'], getPDO());
             }
         } catch (PDOException $e) {
