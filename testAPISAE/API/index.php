@@ -73,7 +73,7 @@ switch ($ressource)
             sendJson(getErrorArray('Erreur interne au serveur', 500, $e), 500);
         }
         break;
-    case 'ajouterFavoris':
+    case 'ajouterFavori':
         try {
             if (verifierAuthentification()) {
                 $idFestival = $donnees['idFestival'] ?? null;
@@ -96,7 +96,7 @@ switch ($ressource)
             sendJson(getErrorArray('Erreur interne au serveur', 500, $e), 500);
         }
         break;
-    case 'supprimerFavoris':
+    case 'supprimerFavori':
         try {
             if (verifierAuthentification()) {
                 $idFestival = $donnees['idFestival'] ?? null;
