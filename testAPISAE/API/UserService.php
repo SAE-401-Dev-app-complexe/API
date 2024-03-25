@@ -1,6 +1,13 @@
 <?php
 class UserService {
 
+    /**
+     * Check if the user exists and give him an API key if he does
+     * @param String $login
+     * @param String $mdp
+     * @param PDO $pdo
+     * @return array<String, mixed>
+     */
     public static function connection(String $login, String $mdp, PDO $pdo): array
     {
         $stmt = $pdo->prepare("SELECT * FROM utilisateur WHERE login = :login AND mdp = :mdp");
@@ -25,6 +32,11 @@ class UserService {
         }
     }
 
+    /**
+     * Generate an API key for the user
+     * @param PDO $pdo
+     * @return string
+     */
     public static function genererCleApi(PDO $pdo): string
     {
         // Génère une clé API aléatoire de 20 caractères alphanumériques
@@ -47,6 +59,12 @@ class UserService {
         return $cleApi;
     }
 
+    /**
+     * Get the user's information
+     * @param String $cleApi
+     * @param PDO $pdo
+     * @return array<array<String>>
+     */
     public static function getUser(String $cleApi, PDO $pdo): array
     {
         $stmt = $pdo->prepare("SELECT * FROM utilisateur WHERE cleApi = :cleApi");

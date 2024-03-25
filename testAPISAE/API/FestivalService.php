@@ -2,6 +2,12 @@
 
 class FestivalService {
 
+    /**
+     * Get all festivals starting from today
+     * @param PDO $pdo
+     * @param String $cleApi
+     * @return array<String>
+     */
     public static function getFestival(PDO $pdo, String $cleApi): array
     {
         $stmt = $pdo->prepare("
