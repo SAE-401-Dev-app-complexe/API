@@ -138,7 +138,18 @@ switch ($ressource)
             sendJson(getErrorArray('Erreur interne au serveur', 500, $e), 500);
         }
         break;
-
+    case 'details' :
+        try {
+            $idFestival = $donnees['idFestival'] ?? null;
+            if (!$idFestival) {
+                sendJson(getErrorArray('Mauvaise requête', 400, 'ID du festival manquant'), 400);
+                break;
+            }
+            sendJson(FestivalService::getDetailsFestival($idFestival, getPDO()));
+        } catch (PDOException $e) {
+            sendJson(getErrorArray('Erreur interne au serveur', 500, $e), 500);
+        }
+        break;
     // tentative d'appel d'une méthode n'existant pas
     default:
         sendJson(getErrorArray('URL non trouvée', 404, 'Requête inconnue'), 404);

@@ -29,4 +29,20 @@ class FestivalService {
         $stmt->execute();
         return $stmt->fetchAll();
     }
+
+    /**
+     * @param mixed $idFestival id a chercher
+     * @param PDO $getPDO pdo de la bd
+     * @return array<String>
+     * @throws PDOException
+     */
+    public static function getDetailsFestival(mixed $idFestival, PDO $getPDO) : array
+    {
+        $stmt = $getPDO->prepare("SELECT SP.* FROM spectacledefestival SDF
+                                                                INNER JOIN spectacle SP ON SDF.idSpectacle = SP.idSpectacle
+                                                                WHERE SDF.idFestival = :idFestival");
+        $stmt->bindParam(":idFestival",$idFestival);
+        $stmt->execute();
+        return $stmt->fetchAll();
+    }
 }
