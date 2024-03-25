@@ -85,7 +85,7 @@ switch ($ressource)
         }
         break;
     // Ajoute un festival en favoris a l'utilisateur de l'api
-    case 'ajouterFavoris':
+    case 'ajouterFavori':
         try {
             if (verifierAuthentification()) {
                 $idFestival = $donnees['idFestival'] ?? null;
@@ -110,7 +110,7 @@ switch ($ressource)
         }
         break;
     // Supprime un festival de la liste des favoris de l'utilisateur
-    case 'supprimerFavoris':
+    case 'supprimerFavori':
         try {
             if (verifierAuthentification()) {
                 $idFestival = $donnees['idFestival'] ?? null;
