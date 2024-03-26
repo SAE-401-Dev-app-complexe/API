@@ -1,6 +1,6 @@
 <?php
 //Import des fichiers utiles pour les fonctions
-require 'bd.php';
+require 'database.php';
 require 'UserService.php';
 require 'FestivalService.php';
 require 'FavorisService.php';

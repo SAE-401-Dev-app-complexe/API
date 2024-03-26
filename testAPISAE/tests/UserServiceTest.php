@@ -1,6 +1,7 @@
 <?php
 require '../API/UserService.php';
 require 'classeUtilitaireTest.php';
+require '../API/database.php';
 use PHPUnit\Framework\TestCase;
 
 class UserServiceTest extends TestCase
@@ -9,17 +10,7 @@ class UserServiceTest extends TestCase
     {
         parent::setUp();
         // GIVEN a pdo for tests
-        $host = 'localhost';
-        $dbName = 'festiplanbfgi_sae';
-        $dbCharset = 'utf8mb4';
-        $dbPort = '3306';
-        $user = 'root';
-        $pass = 'root';
-        $datasource = "mysql:host=$host;dbname=$dbName;charset=$dbCharset;port=$dbPort";
-        $this->pdo = new PDO($datasource, $user, $pass, [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-        ]);
+        $this->pdo = getPDO();
     }
 
     public function testConnexionNoError()
@@ -38,15 +29,6 @@ class UserServiceTest extends TestCase
             $apiKey = $apiKey["cleApi"];
             $this->assertNotNull($apiKey);
             $this->assertEquals(20, strlen($apiKey));
-            // WHEN fetching all users
-            /*
-            $users = UserService::getUser($apiKey, $this->pdo);
-            // THEN 1 and only 1 user is find
-            $this->assertCount(1, $users);
-            // and the user is the special user
-            $this->assertEquals($login, $users[0]["login"]);
-            $this->assertEquals($password, $users[0]["mdp"]);
-            */
             $this -> pdo -> rollBack();
         } catch (PDOException $e) {
             $this->pdo->rollBack();
@@ -106,8 +88,6 @@ class UserServiceTest extends TestCase
     {
         // GIVEN the database initialized with the script in the readme
         // and a special user
-        $login = 'logintest';
-        $password = 'passwordtest123';
         try {
             $this -> pdo -> beginTransaction();
             for ($i = 0; $i < 10; $i++) {
