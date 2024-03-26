@@ -140,7 +140,7 @@ switch ($ressource)
         break;
     case 'details' :
         try {
-            $idFestival = $donnees['idFestival'] ?? null;
+            $idFestival = $donnees[0]['idFestival'] ?? null;
             if (!$idFestival) {
                 sendJson(getErrorArray('Mauvaise requête', 400, 'ID du festival manquant'), 400);
                 break;
