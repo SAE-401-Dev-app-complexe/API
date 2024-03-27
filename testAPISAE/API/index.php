@@ -66,8 +66,7 @@ $donnees = file_get_contents('php://input')
     : null;
 
 
-switch ($ressource)
-{
+switch ($ressource) {
     // Cas où la méthode n'est pas spécifiée
     case null:
         sendJson(getErrorArray('Mauvaise requête', 400, 'Spécifiez la ressource à envoyer'), 400);
@@ -90,12 +89,14 @@ switch ($ressource)
 
     // Obtention des informations de tous les festivals commençant à partir d'aujourd'hui
     case 'festivals':
-        try {
-            sendJson(FestivalService::getFestival(getPDO(), $_SERVER['HTTP_APIKEY']));
-        } catch (PDOException $e) {
-            sendJson(getErrorArray('Erreur interne au serveur', 500, $e), 500);
-        }
+        if (verifierAuthentification()) {
+            try {
+                sendJson(FestivalService::getFestival(getPDO(), $_SERVER['HTTP_APIKEY']));
+            } catch (PDOException $e) {
+                sendJson(getErrorArray('Erreur interne au serveur', 500, $e), 500);
+            }
         break;
+        }
     // Ajoute un festival en favoris a l'utilisateur de l'api
     case 'ajouterFavori':
         try {
