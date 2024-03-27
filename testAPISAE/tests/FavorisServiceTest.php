@@ -93,7 +93,7 @@ class FavorisServiceTest extends TestCase
 
 
         // WHEN you call the getter
-        $festival = FestivalService::getFestival($mockPDO, 'mockApiKey');
+        $festival = FavorisService::getFestivalFavoris($mockPDO, 'mockApiKey');
 
         // THEN you get the data you expect
         $this->assertEquals(1, $mockFavori['idFestival']);
