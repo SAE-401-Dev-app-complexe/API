@@ -95,8 +95,8 @@ switch ($ressource) {
             } catch (PDOException $e) {
                 sendJson(getErrorArray('Erreur interne au serveur', 500, $e), 500);
             }
-        break;
         }
+        break;
     // Ajoute un festival en favoris a l'utilisateur de l'api
     case 'ajouterFavori':
         try {

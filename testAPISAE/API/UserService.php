@@ -73,6 +73,11 @@ class UserService {
         return $stmt->fetchAll();
     }
 
+    /**
+     * @param String $apiKey the key to verify
+     * @param PDO $getPDO the database
+     * @return bool true if the key is in the database, false otherwise
+     */
     public static function verifierAuthentification(String $apiKey, PDO $getPDO): bool
     {
         $stmt = $getPDO->prepare("SELECT cleApi FROM utilisateur WHERE cleApi = :cleApi");
