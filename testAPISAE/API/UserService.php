@@ -79,6 +79,6 @@ class UserService {
         $stmt-> bindParam("cleApi", $apiKey);
         $stmt->execute();
         $resultat = $stmt->fetch();
-        return $resultat["cleApi"] == $apiKey;
+        return $resultat && $resultat["cleApi"] == $apiKey;
     }
 }
