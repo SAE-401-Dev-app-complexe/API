@@ -67,7 +67,5 @@ class FestivalServiceTest extends TestCase
         // THEN you get the data you expect
         $this->assertEquals($mockSpectacleFestival['idSpectacle'], $festival['idSpectacle']);
         $this->assertEquals($mockSpectacleFestival['idFestival'], $festival['idFestival']);
-
-
     }
 }

@@ -1,5 +1,8 @@
-<?php 
-function getPDO() : PDO
+<?php
+/**
+ * @return PDO Une instance de PDO.
+ */
+function getPDO(): PDO
 {
     $host = 'localhost';
     $dbName = 'festiplanbfgi_sae';
@@ -17,6 +20,6 @@ function getPDO() : PDO
     try {
         return new PDO($dsn, $user, $pass, $options);
     } catch (PDOException $e) {
-        throw new PDOException('Database connection failed');
+        throw new PDOException('La connexion à la base de données a échoué');
     }
 }

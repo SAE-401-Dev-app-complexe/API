@@ -1,12 +1,19 @@
 <?php
 
+/**
+ * Service gérant les festivals créés sur FestiplAndroid.
+ * @author Enzo Cluzel
+ * @author Lucas Descriaud
+ * @author Loïc Faugières
+ * @author Simon Guiraud
+ */
 class FestivalService {
 
     /**
-     * Get all festivals starting from today
-     * @param PDO $pdo
-     * @param String $cleApi
-     * @return array<String>
+     * Récupère la liste des festivals à venir.
+     * @param PDO $pdo La connexion à la base de données
+     * @param String $cleApi La clé api de l'utilisateur
+     * @return array<String> La liste des festivals à venir
      */
     public static function getFestival(PDO $pdo, String $cleApi): array
     {
@@ -25,23 +32,25 @@ class FestivalService {
             AND (UT.cleApi = :cleApi OR FF.idFestival IS NULL)
             ORDER BY FE.dateDebut ASC;");
 
-        $stmt->bindParam("cleApi",$cleApi);
+        $stmt->bindParam("cleApi", $cleApi);
         $stmt->execute();
         return $stmt->fetchAll();
     }
 
     /**
-     * @param mixed $idFestival id a chercher
-     * @param PDO $getPDO pdo de la bd
-     * @return array<String>
-     * @throws PDOException
+     * Récupère les spectacles d'un festival.
+     * @param mixed $idFestival L'id du festival
+     * @param PDO $getPDO La connexion à la base de données
+     * @return array<String> La liste des spectacles du festival
      */
-    public static function getDetailsFestival(mixed $idFestival, PDO $getPDO) : array
+    public static function getDetailsFestival(mixed $idFestival, PDO $getPDO): array
     {
         $stmt = $getPDO->prepare("SELECT SP.* FROM spectacledefestival SDF
-                                                                INNER JOIN spectacle SP ON SDF.idSpectacle = SP.idSpectacle
-                                                                WHERE SDF.idFestival = :idFestival");
-        $stmt->bindParam(":idFestival",$idFestival);
+                                  INNER JOIN spectacle SP
+                                  ON SDF.idSpectacle = SP.idSpectacle
+                                  WHERE SDF.idFestival = :idFestival");
+
+        $stmt->bindParam(":idFestival", $idFestival);
         $stmt->execute();
         return $stmt->fetchAll();
     }

@@ -1,15 +1,15 @@
 <?php
 //Import des fichiers utiles pour les fonctions
-require 'database.php';
-require 'UserService.php';
-require 'FestivalService.php';
-require 'FavorisService.php';
+require 'API/database.php';
+require 'API/UserService.php';
+require 'API/FestivalService.php';
+require 'API/FavorisService.php';
 
 /**
  * @param array<mixed> $jsonData tableau à transformer en json
  * @param int $code code de la réponse
  */
-function sendJson(array $jsonData, int $code = 200) : void
+function sendJson(array $jsonData, int $code = 200): void
 {
     header('Content-Type: application/json; charset=utf-8');
     header('Access-Control-Allow-Origin: *');
@@ -25,7 +25,7 @@ function sendJson(array $jsonData, int $code = 200) : void
  * @param String $details explique précisement les causes de l'erreur
  * @return array<mixed> tableau renvoyé contenant toutes les informations de l'erreur
  */
-function getErrorArray(String $error, int $code, String $details) : array
+function getErrorArray(String $error, int $code, String $details): array
 {
     return [
         'error' => $error,
@@ -35,10 +35,10 @@ function getErrorArray(String $error, int $code, String $details) : array
 }
 
 /**
- * @return bool renvoie true si la clé utilisée dans le header requête existe dans la base de données,
- * false sinon.
+ * @return bool renvoie true si la clé utilisée dans le header
+ * requête existe dans la base de données, false sinon.
  */
-function verifierAuthentification() : bool
+function verifierAuthentification(): bool
 {
     if (!isset($_SERVER['HTTP_APIKEY']) || !UserService::verifierAuthentification($_SERVER['HTTP_APIKEY'], getPDO())) {
         sendJson(getErrorArray('Accès non autorisé', 401, 'Veuillez fournir une clé API valide'), 401);
@@ -48,7 +48,6 @@ function verifierAuthentification() : bool
 }
 
 // Suite de l'url après le /API/
-// $demande = $_GET['demande'] ou null;
 $demande = !empty($_GET['demande'])
     ? htmlspecialchars($_GET['demande'])
     : "";
@@ -65,7 +64,6 @@ $donnees = file_get_contents('php://input')
     ? json_decode(file_get_contents('php://input'), true)
     : null;
 
-
 switch ($ressource) {
     // Cas où la méthode n'est pas spécifiée
     case null:
@@ -81,7 +79,7 @@ switch ($ressource) {
                 sendJson(getErrorArray('Mauvaise requête', 400, 'Identifiant ou mot de passe manquant'), 400);
                 break;
             }
-            sendJson(UserService::connection($login, $password, getPDO()));
+            sendJson(UserService::connexion($login, $password, getPDO()));
         } catch (PDOException $e) {
             sendJson(getErrorArray('Erreur interne au serveur', 500, $e), 500);
         }
@@ -97,6 +95,7 @@ switch ($ressource) {
             }
         }
         break;
+
     // Ajoute un festival en favoris a l'utilisateur de l'api
     case 'ajouterFavori':
         try {
@@ -139,7 +138,9 @@ switch ($ressource) {
             sendJson(getErrorArray('Erreur interne au serveur', 500, $e), 500);
         }
         break;
-    case 'details' :
+    
+    // Renvoie les spectacles associés à un festival et programmés
+    case 'details':
         try {
             $idFestival = $donnees[0]['idFestival'] ?? null;
             if (!$idFestival) {
@@ -151,8 +152,9 @@ switch ($ressource) {
             sendJson(getErrorArray('Erreur interne au serveur', 500, $e), 500);
         }
         break;
-    // tentative d'appel d'une méthode n'existant pas
+
+    // Tentative d'appel d'une méthode n'existant pas
     default:
         sendJson(getErrorArray('URL non trouvée', 404, 'Requête inconnue'), 404);
         break;
-}       
+}

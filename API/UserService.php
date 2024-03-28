@@ -1,18 +1,28 @@
 <?php
+
+/**
+ * Service gérant l'authentification des utilisateurs
+ * de l'application FestiplAndroid.
+ * @author Enzo Cluzel
+ * @author Lucas Descriaud
+ * @author Loïc Faugières
+ * @author Simon Guiraud
+ */
 class UserService {
 
     /**
-     * Check if the user exists and give him an API key if he does
-     * @param String $login
-     * @param String $mdp
-     * @param PDO $pdo
-     * @return array<String, mixed>
+     * Vérifie les identifiants de l'utilisateur et génère une clé API si besoin
+     * @param String $login Le login de l'utilisateur
+     * @param String $mdp Le mot de passe de l'utilisateur
+     * @param PDO $pdo La connexion à la base de données
+     * @return array<String, mixed> La clé API de l'utilisateur
      */
-    public static function connection(String $login, String $mdp, PDO $pdo): array
+    public static function connexion(String $login, String $mdp, PDO $pdo): array
     {
         $stmt = $pdo->prepare("SELECT * FROM utilisateur WHERE login = :login AND mdp = :mdp");
         $stmt-> bindParam("login", $login);
         $stmt-> bindParam("mdp", $mdp);
+        
         $stmt->execute();
         $result = $stmt->fetchAll();
 
@@ -33,19 +43,16 @@ class UserService {
     }
 
     /**
-     * Generate an API key for the user
-     * @param PDO $pdo
-     * @return string
+     * Génère une clé API aléatoire de 20 caractères alphanumériques
+     * en vérifiant la non existence de cette clé dans la base de données
+     * @param PDO $pdo La connexion à la base de données
+     * @return string La clé API générée
      */
     public static function genererCleApi(PDO $pdo): string
     {
-        // Génère une clé API aléatoire de 20 caractères alphanumériques
-        // puis modifie l'utilisateur et lui associe cette clé
-        // attention : vérifier qu'un utilisateur ayant la même clé n'existe pas
         $cleApi = null;
         do {
             $cleApi = bin2hex(random_bytes(10));
-
 
             $stmt = $pdo->prepare("SELECT cleApi FROM utilisateur WHERE cleApi = :cleApi");
             $stmt-> bindParam("cleApi", $cleApi);
@@ -60,12 +67,12 @@ class UserService {
     }
 
     /**
-     * Get the user's information
+     * 
      * @param String $cleApi
      * @param PDO $pdo
      * @return array<array<String>>
      */
-    public static function getUser(String $cleApi, PDO $pdo): array
+    public static function getUtilisateur(String $cleApi, PDO $pdo): array
     {
         $stmt = $pdo->prepare("SELECT * FROM utilisateur WHERE cleApi = :cleApi");
         $stmt-> bindParam("cleApi", $cleApi);
@@ -74,9 +81,10 @@ class UserService {
     }
 
     /**
-     * @param String $apiKey the key to verify
-     * @param PDO $getPDO the database
-     * @return bool true if the key is in the database, false otherwise
+     * Vérifie si une clé API est présente dans la base de données
+     * @param String $apiKey la clé API à vérifier
+     * @param PDO $getPDO La connexion à la base de données
+     * @return bool true si la clé API est présente, false sinon
      */
     public static function verifierAuthentification(String $apiKey, PDO $getPDO): bool
     {

@@ -2,6 +2,7 @@
 require '../API/UserService.php';
 require 'classeUtilitaireTest.php';
 require '../API/database.php';
+
 use PHPUnit\Framework\TestCase;
 
 class UserServiceTest extends TestCase
@@ -24,7 +25,7 @@ class UserServiceTest extends TestCase
             classeUtilitaireTest::insertUser('prenomtest', 'nomtest',
                 'testmail@gmail.com', $login, $password, $this->pdo);
             // WHEN giving the login and password of the special user
-            $apiKey = UserService::connection($login, $password, $this->pdo);
+            $apiKey = UserService::connexion($login, $password, $this->pdo);
             // THEN he gets an api key that contains 20 characters
             $apiKey = $apiKey["cleApi"];
             $this->assertNotNull($apiKey);
@@ -49,7 +50,7 @@ class UserServiceTest extends TestCase
             classeUtilitaireTest::insertUser('prenomtest', 'nomtest',
                 'testmail@gmail.com', $login, $password, $this->pdo);
             // WHEN giving the login and a wrong password
-            $apiKey = UserService::connection($login, $wrongPassword, $this->pdo);
+            $apiKey = UserService::connexion($login, $wrongPassword, $this->pdo);
             // THEN he gets an api key that is null
             $apiKey = $apiKey["cleApi"];
             $this->assertNull($apiKey);
@@ -73,7 +74,7 @@ class UserServiceTest extends TestCase
             classeUtilitaireTest::insertUser('prenomtest', 'nomtest',
                 'testmail@gmail.com', $login, $password, $this->pdo);
             // WHEN giving a wrong login (and any password)
-            $apiKey = UserService::connection($wrongLogin, $password, $this->pdo);
+            $apiKey = UserService::connexion($wrongLogin, $password, $this->pdo);
             // THEN he gets an api key that is null
             $apiKey = $apiKey["cleApi"];
             $this->assertNull($apiKey);
@@ -102,7 +103,8 @@ class UserServiceTest extends TestCase
             $this->fail("Error : " . $e->getMessage());
         }
     }
-    public function testGetUserNoError()
+
+    public function testGetUtilisateurNoError()
     {
         // GIVEN the database initialized with the script in the readme
         // and a special authentified user
@@ -112,10 +114,10 @@ class UserServiceTest extends TestCase
             $this -> pdo -> beginTransaction();
             classeUtilitaireTest::insertUser($prenom, $nom,
                 'testmail@gmail.com', 'logintest', 'passwordtest123', $this->pdo);
-            $apiKey = UserService::connection('logintest', 'passwordtest123', $this->pdo);
+            $apiKey = UserService::connexion('logintest', 'passwordtest123', $this->pdo);
 
             //WHEN fetching the user with the api key
-            $user = UserService::getUser($apiKey["cleApi"], $this->pdo);
+            $user = UserService::getUtilisateur($apiKey["cleApi"], $this->pdo);
             //THEN the user is the special user
             $this->assertCount(1, $user);
             $this->assertEquals($nom, $user[0]["nom"]);
@@ -127,7 +129,7 @@ class UserServiceTest extends TestCase
         }
     }
 
-    public function testGetUserInvalidApiKey()
+    public function testGetUtilisateurInvalidApiKey()
     {
         // GIVEN the database initialized with the script in the readme
         // and a false apiKey
@@ -135,7 +137,7 @@ class UserServiceTest extends TestCase
         try {
             $this -> pdo -> beginTransaction();
             //WHEN fetching an user with the api key
-            $user = UserService::getUser($invalidApiKey, $this->pdo);
+            $user = UserService::getUtilisateur($invalidApiKey, $this->pdo);
             //THEN there is no user
             $this->assertCount(0, $user);
             $this -> pdo -> rollBack();
@@ -155,7 +157,7 @@ class UserServiceTest extends TestCase
             $this->pdo->beginTransaction();
             classeUtilitaireTest::insertUser('prenomtest', 'nomtest',
                 'testmail@gmail.com', $login, $password, $this->pdo);
-            $apiKey = UserService::connection($login, $password, $this->pdo);
+            $apiKey = UserService::connexion($login, $password, $this->pdo);
             // WHEN verifying the authentification with the api key of the user
             $authentification = UserService::verifierAuthentification($apiKey["cleApi"], $this->pdo);
             // THEN the authentification is true
@@ -168,7 +170,7 @@ class UserServiceTest extends TestCase
         }
     }
 
-    public  function testVerifierAuthentificationInvalidApiKey()
+    public function testVerifierAuthentificationInvalidApiKey()
     {
         // GIVEN the database initialized with the script in the readme
         // and a special user
@@ -178,7 +180,7 @@ class UserServiceTest extends TestCase
             $this->pdo->beginTransaction();
             classeUtilitaireTest::insertUser('prenomtest', 'nomtest',
                 'testmail@gmail.com', $login, $password, $this->pdo);
-            $apiKey = UserService::connection($login, $password, $this->pdo);
+            $apiKey = UserService::connexion($login, $password, $this->pdo);
             // WHEN verifying the authentification with an api random api key
             $authentification = UserService::verifierAuthentification(UserService::genererCleApi($this->pdo), $this->pdo);
             // THEN the authentification is false
@@ -200,7 +202,7 @@ class UserServiceTest extends TestCase
         $exceptionThrown = false;
         // WHEN fetching all users
         try {
-            $users = UserService::connection('logintest', 'passwordtest123', $mockPDO);
+            $users = UserService::connexion('logintest', 'passwordtest123', $mockPDO);
         } catch (PDOException $e) {
             // THEN a PDOException is thrown
             $this->assertEquals('Database error', $e->getMessage());

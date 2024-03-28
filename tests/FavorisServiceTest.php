@@ -4,6 +4,7 @@ require '../API/FavorisService.php';
 require '../API/UserService.php';
 require '../API/FestivalService.php';
 require 'classeUtilitaireTest.php';
+
 use PHPUnit\Framework\TestCase;
 
 class FavorisServiceTest extends TestCase
@@ -27,7 +28,7 @@ class FavorisServiceTest extends TestCase
             $this->pdo->beginTransaction();
             classeUtilitaireTest::insertUser('prenomtest', 'nomtest',
                 'test@mail;com', $login, $password, $this->pdo);
-            $apiKey = UserService::connection($login, $password, $this->pdo);
+            $apiKey = UserService::connexion($login, $password, $this->pdo);
             $apiKey = $apiKey["cleApi"];
 
             // WHEN adding the festival to the user's favorites
@@ -56,7 +57,7 @@ class FavorisServiceTest extends TestCase
             $this->pdo->beginTransaction();
             classeUtilitaireTest::insertUser('prenomtest', 'nomtest',
                 'test@mail;com', $login, $password, $this->pdo);
-            $apiKey = UserService::connection($login, $password, $this->pdo);
+            $apiKey = UserService::connexion($login, $password, $this->pdo);
             $apiKey = $apiKey["cleApi"];
             FavorisService::ajouterFavori($idFestival, $apiKey, $this->pdo);
 
@@ -89,8 +90,6 @@ class FavorisServiceTest extends TestCase
         ];
 
         $mockStmt->method('fetchAll')->willReturn($mockFavori);
-
-
 
         // WHEN you call the getter
         $festival = FavorisService::getFestivalFavoris($mockPDO, 'mockApiKey');
